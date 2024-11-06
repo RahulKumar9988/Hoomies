@@ -9,15 +9,16 @@ interface ExploreProps {
 
 function Explore({  description, imageSrc, link }: ExploreProps) {
   return (
-    <div>
-    
-      <div className='border h-80 bg-zinc-900 p-5 rounded-xl '>
-      <Image src={imageSrc} alt="image" width={300} height={300} />
-      <p>{description}</p>
+    <>
+      <div>
+        <div className='border h-80 bg-zinc-900 p-5 rounded-xl '>
+          <Image src={imageSrc} alt="image" width={300} height={300} />
+          <p>{description}</p>
 
-      <a href={link}>Learn More</a>
-    </div>
-    </div>
+          <a href={link}>Learn More</a>
+        </div>
+      </div>
+    </>
   );
 }
 

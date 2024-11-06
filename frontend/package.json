@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "next dev",
-    "build": "next build",                 
+    "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "export": "next build && next export"
@@ -15,15 +15,19 @@
   "dependencies": {
     "@radix-ui/react-label": "^2.1.0",
     "@tabler/icons-react": "^3.21.0",
+    "axios": "^1.7.7",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
+    "cors": "^2.8.5",
     "framer-motion": "^11.11.11",
+    "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.454.0",
     "next": "15.0.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "tailwind-merge": "^2.5.4",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/node": "^22",

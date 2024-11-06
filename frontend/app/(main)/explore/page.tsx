@@ -1,4 +1,5 @@
 import Explore from '@/components/pages/explore/Explore'
+import Upload from '@/components/pages/explore/Upload'
 import React from 'react'
 
 function page() {
@@ -15,6 +16,8 @@ function page() {
         <Explore description="description..." imageSrc='/house/house1.avif' link=''/>
 
         <Explore description='description...' imageSrc='/house/house1.avif' link=''/>
+
+        <Upload/>
         
       </div>
       

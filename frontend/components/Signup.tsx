@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
@@ -9,12 +9,34 @@ import {
   IconBrandGoogle,
 } from "@tabler/icons-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import axios from "axios";
 
 export function Signup() {
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    console.log("Form submitted");
-  };
+  const router = useRouter()
+
+  const [user, setuser] = useState({ 
+    email: '', 
+    username: '', 
+    password: '', 
+  });
+  const login_submit = async() =>{
+    try{
+      const response = await axios.post('http://127.0.0.1:8787/api/v1/users/signin', user);
+      console.log(response);
+      const jwt = response.data.jwt;
+      localStorage.setItem("token", jwt);
+      
+      if(response){
+        router.push('/explore')
+      }
+      
+    }catch(err:any){
+      alert(`${err.message}`)
+
+    }
+
+  }
   return (
     <div className="mt-12 max-w-md w-full mx-auto rounded-none md:rounded-2xl border border-white p-4 md:p-8  bg-black">
       <h2 className="font-bold text-xl text-neutral-200">
@@ -24,21 +46,25 @@ export function Signup() {
         Login to Hoomies...
       </p>
 
-      <form className="my-8" onSubmit={handleSubmit}>
+      <div className="my-8" >
         <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2 mb-4">
         </div>
         <LabelInputContainer className="mb-4">
           <Label htmlFor="email">Email Address</Label>
-          <Input id="email" placeholder="projectmayhem@fc.com" type="email" />
+          <Input id="email" placeholder="projectmayhem@fc.com" type="email" onChange={(e)=>{
+            setuser({...user, email: e.target.value})
+          }}/>
         </LabelInputContainer>
         <LabelInputContainer className="mb-4">
           <Label htmlFor="password">Password</Label>
-          <Input id="password" placeholder="••••••••" type="password" />
+          <Input id="password" placeholder="••••••••" type="password" onChange={(e)=>{
+            setuser({...user, password: e.target.value})
+          }}/>
         </LabelInputContainer>
 
         <button
           className="bg-gradient-to-br relative group/btn  from-zinc-900 block bg-zinc-800 w-full text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_ shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]"
-          type="submit"
+          type="submit" onClick={login_submit}
         >
           Sign up &rarr;
           <BottomGradient />
@@ -73,7 +99,7 @@ export function Signup() {
             <Link className="text-center font-semibold" href="/signin">: Sign in </Link>
           </div>          
         </div>
-      </form>
+      </div>
     </div>
   );
 }
