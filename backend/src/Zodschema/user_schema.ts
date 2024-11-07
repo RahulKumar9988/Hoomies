@@ -11,6 +11,13 @@ const user_Schema_signin = z.object({
     email: z.string().email({message:"email should be valid and unique"}),
     password: z.string().min(7,{message:"password must be grater then 6 size"}),
 })
-export default user_Schema_signin ; user_Schema_signup;
 
-;
+const post_Schema= z.object({
+    title: z.string().min(2, { message: "please add title" }),
+    content: z.string().min(2, { message: "please add content" }),
+    image: z.string({ message: "import image" }),
+});
+
+  
+export default user_Schema_signin ; user_Schema_signup; post_Schema;
+

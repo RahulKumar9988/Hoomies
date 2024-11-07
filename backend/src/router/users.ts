@@ -25,7 +25,7 @@ userRouter.post('/signup',async(c)=>{
 
     try{
         const data = await c.req.json()
-        user_Schema_signup.parse(data)
+        user_Schema_signup.safeParse(data)
         
         const newUser = await prisma.user.create({
             data:{
@@ -70,7 +70,7 @@ userRouter.post('/signin',async(c)=>{
 
     try{
         const data = await c.req.json()
-        user_Schema_signin.parse(data)
+        user_Schema_signin.safeParse(data)
         
         const { email, password } = data;
 
