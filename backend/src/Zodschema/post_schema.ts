@@ -3,6 +3,8 @@ const post_Schema= z.object({
     title: z.string().min(2, { message: "please add title" }),
     content: z.string().min(2, { message: "please add content" }),
     image: z.string({ message: "import image" }),
+    price:z.number({message:"enter the price"}),
+    phone:z.string().min(10).max(10)
 });
 
 export default post_Schema;

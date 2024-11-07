@@ -72,21 +72,24 @@ postRoute.post('/',async(c)=>{
             data:{
                 title:body.title,
                 content:body.content,
+                price:body.price,
+                phone:body.phone,
                 image:body.image,
-                authorId: String(authorId)
+                authorId:authorId
+                
             }
         })
-        console.log(posts.id);
+        console.log(posts.authorId);
 
         return c.json({
-            id:posts.id
+            id:posts.authorId
         })
         
 
     }catch(err:any){
         return c.json({
             status:"error",
-            message:"failed to create post"
+            message:"failed to create post",err,
         })
         
     }

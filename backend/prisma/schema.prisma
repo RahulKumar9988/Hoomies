@@ -18,16 +18,17 @@ model User {
   username String
   email    String @unique
   password String
+  phone    String @unique
   posts    Post[] @relation("UserPosts")
 }
 
 model Post {
-  id        String @id @default(uuid())
+  authorId  String @id
   title     String
   content   String
-  authorId  String
-  image String
+  image     String
+  phone     String
+  price     Float
   published Boolean @default(false)
   author    User @relation(fields: [authorId], references: [id], name: "UserPosts")
 }
-
