@@ -10,7 +10,7 @@ app.get('/',async (c)=>{
     return c.text('Hello, Hono!')
 })
 app.route('/api/v1/users',userRouter);
-app.route('/api/v1/upload',postRoute);
+app.route('/api/v1/post',postRoute);
 
 
 export default app

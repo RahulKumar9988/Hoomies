@@ -15,6 +15,8 @@ export const postRoute = new Hono<{
     
 }>()
 
+
+//--------------------------------user_Validation-----------------------------------------//
 postRoute.use('/*',async(c,next)=>{
     const auth_header = c.req.header("authorization");
     console.log("kooo");
@@ -47,6 +49,7 @@ postRoute.use('/*',async(c,next)=>{
     }
 })
 
+//---------------------------------uploading_post-----------------------------------------//
 postRoute.post('/',async(c)=>{
 
     const body = await c.req.json();
@@ -95,3 +98,56 @@ postRoute.post('/',async(c)=>{
     }
     
 })
+
+//---------------------------------delete_posts-------------------------------------------//
+postRoute.delete('/delete/:id', async (c) => {
+    const postId = c.req.param('id'); 
+    const userId = c.get('userId'); 
+    
+    // Initialize Prisma client
+    const prisma = new PrismaClient({
+      datasourceUrl: c.env.DATABASE_URL, 
+    }).$extends(withAccelerate());
+    
+    try {
+      // Check post exists
+        const post = await prisma.post.findUnique({
+        where: { id: postId }
+        });
+  
+        if (!post) {
+        return c.json({
+            status: 'error',
+            message: 'Post not found',
+        }, 404);
+        }
+
+        // Check if the user is authorized to delete the post
+        if (post.authorId !== userId) {
+        return c.json({
+            status: 'error',
+            message: 'Unauthorized',
+        }, 403);
+        }
+
+        // Delete the post
+        await prisma.post.delete({
+        where: { id: postId }
+        });
+
+        return c.json({
+        status: 'success',
+        message: 'Post deleted successfully',
+        postId: postId,
+        }, 200);
+  
+    }catch (err) {
+
+        console.error('Failed to delete post:', err);
+        return c.json({
+        status: 'error',
+        message: 'Failed to delete post',
+        }, 500);
+    }
+});
+  
