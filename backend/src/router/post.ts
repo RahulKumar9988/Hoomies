@@ -100,7 +100,7 @@ postRoute.post('/',async(c)=>{
 })
 
 //---------------------------------delete_posts-------------------------------------------//
-postRoute.delete('/delete/:id', async (c) => {
+postRoute.delete('/:id', async (c) => {
     const postId = c.req.param('id'); 
     const userId = c.get('userId'); 
     
@@ -150,4 +150,46 @@ postRoute.delete('/delete/:id', async (c) => {
         }, 500);
     }
 });
+
+//----------------------------------update_post-------------------------------------------//
+postRoute.put('/', async (c) => {
+    const body = await c.req.json();
+    const { success , error } = post_Schema.safeParse(body);
+    
+    if(!success){
+        return c.json({
+            status: 'error',
+            message: 'schema is invalid',error
+        })
+    }
+    
+    const prisma = new PrismaClient({
+        datasourceUrl:c.env.DATABASE_URL,
+    }).$extends(withAccelerate())
+
+    try{
+        const updated_post = await prisma.post.update({
+            where:{
+                id:body.id
+            },data:{
+                title:body.title,
+                content:body.content,
+                price:body.price,
+                phone:body.phone,
+                image:body.image,
+                
+            }
+        })
+        return c.json({
+            status: 'success',
+            message: 'Post updated successfully',
+            id: updated_post.id
+        })
+    }catch(err){
+        return c.json({
+            status: 'error',
+            message: 'Failed to update post',
+        })
+    }
+})
   
