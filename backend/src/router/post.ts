@@ -231,10 +231,10 @@ postRoute.get('/:id', async (c)=>{
 
         const post = await prisma.post.findFirst({
             where:{
-                id:id
+                authorId:id
             },
             select:{
-                id:true,
+                authorId:true,
                 content:true,
                 title:true,
                 price:true,
