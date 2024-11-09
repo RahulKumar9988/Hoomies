@@ -193,3 +193,12 @@ postRoute.put('/', async (c) => {
     }
 })
   
+//----------------------------------bulk_route--------------------------------------------//
+postRoute.get('/', async (c)=>{
+    
+    const prisma = new PrismaClient({
+        datasourceUrl:c.env.DATABASE_URL,
+    }).$extends(withAccelerate())
+
+    
+})
