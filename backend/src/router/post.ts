@@ -200,5 +200,56 @@ postRoute.get('/', async (c)=>{
         datasourceUrl:c.env.DATABASE_URL,
     }).$extends(withAccelerate())
 
+    try{
+        const post = await prisma.post.findMany({
+            select:{
+                content:true,
+                title:true,
+                price:true,
+                phone:true,
+                image:true,
+            }
+        })
     
+        return c.json({post})
+
+    }catch(err){
+        return c.json({
+            status: 'error',
+            message: 'Failed to fetch posts',
+        })
+    }
+})
+
+postRoute.get('/:id', async (c)=>{
+    const id = c.req.param("id");
+    const prisma = new PrismaClient({
+        datasourceUrl:c.env.DATABASE_URL,
+    }).$extends(withAccelerate())
+
+    try{
+
+        const post = await prisma.post.findFirst({
+            where:{
+                id:id
+            },
+            select:{
+                id:true,
+                content:true,
+                title:true,
+                price:true,
+                phone:true,
+                image:true,
+            }
+        })
+
+        return c.json({post});
+
+    }catch(err){
+        return c.json({
+            status:'error',
+            message:"unable to get data"
+        })
+    }
+
 })
