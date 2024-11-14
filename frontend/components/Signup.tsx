@@ -11,8 +11,10 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import { signIn, useSession } from "next-auth/react";
 
 export function Signup() {
+  const { data: session } = useSession();
   const router = useRouter()
 
   const [user, setuser] = useState({ 
@@ -38,7 +40,12 @@ export function Signup() {
 
   }
   return (
-    <div className="mt-12 max-w-md w-full mx-auto rounded-none md:rounded-2xl border border-white p-4 md:p-8  bg-black">
+    <>
+      {session ? (
+        router.push('/')
+      ):(
+        <>
+        <div className="mt-12 max-w-md w-full mx-auto rounded-none md:rounded-2xl border border-white p-4 md:p-8  bg-black">
       <h2 className="font-bold text-xl text-neutral-200">
         Welcome to Hoomies...
       </h2>
@@ -83,7 +90,9 @@ export function Signup() {
             </span>
             <BottomGradient />
           </button>
-          <button
+          <button onClick={()=>{
+            signIn('google')
+          }}
             className=" relative group/btn flex space-x-2 items-center justify-start px-4 w-full text-black rounded-md h-10 font-medium bg-zinc-900 dark:shadow-[0px_0px_1px_1px_var(--neutral-800)]"
             type="submit"
           >
@@ -91,6 +100,7 @@ export function Signup() {
             <span className="text-neutral-300 text-sm">
               Google
             </span>
+            
             <BottomGradient />
           </button>
           
@@ -101,7 +111,10 @@ export function Signup() {
         </div>
       </div>
     </div>
-  );
+        </>
+      )}
+    </>
+  )
 }
 
 const BottomGradient = () => {
