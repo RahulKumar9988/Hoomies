@@ -26,7 +26,6 @@ export function Signup() {
   useEffect(() => {
     if (session) {
       router.push('/');
-      alert("welcome")
     }
   }, [session, router]);
 
