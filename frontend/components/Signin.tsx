@@ -28,7 +28,6 @@ export function Signin() {
   useEffect(() => {
     if (session) {
       router.push('/');
-      alert("welcome")
     }
   }, [session, router]);
 
@@ -93,16 +92,7 @@ export function Signin() {
         <div className="bg-gradient-to-r from-transparent via-neutral-700 to-transparent my-8 h-[1px] w-full" />
 
         <div className="flex flex-col space-y-4">
-          <button
-            className=" relative group/btn flex space-x-2 items-center justify-start px-4 w-full text-black rounded-md h-10 font-medium  bg-zinc-900 shadow-[0px_0px_1px_1px_var(--neutral-800)]"
-            type="submit"
-          >
-            <IconBrandGithub className="h-4 w-4 text-neutral-300" />
-            <span className="text-neutral-300 text-sm">
-              GitHub
-            </span>
-            <BottomGradient />
-          </button>
+          
           <button onClick={()=>{
             signIn('google')
           }}
