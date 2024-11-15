@@ -2,7 +2,10 @@
 import React from "react";
 import { FloatingNav } from "@/components/ui/floating-navbar";
 import { IconHome, IconMessage, IconUser } from "@tabler/icons-react";
+import { useSession } from "next-auth/react";
 export function Navbar() {
+  const { data: session } = useSession();
+
   const navItems = [
     {
       name: "Home",
@@ -20,17 +23,13 @@ export function Navbar() {
       icon: (
         <IconMessage className="h-4 w-4 text-neutral-500" />
       ),
-    },
-    {
-      name: "Sponser",
-      link: "/sponser",
-    },
+    }
     
   ];
   return (
     <div className=" right-1 w-96  ">
       <FloatingNav navItems={navItems} />
-      <DummyContent />
+      <DummyContent />  
     </div>
   );
 }

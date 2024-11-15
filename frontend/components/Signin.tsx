@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
@@ -11,16 +11,27 @@ import {
 import Link from "next/link";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { signIn, useSession } from "next-auth/react";
 
 
 export function Signin() {
   const router = useRouter()
+  const { data: session } = useSession();
+
 
   const [user, setuser] = useState({ 
     email: '', 
     username: '', 
     password: '', 
   });
+
+  useEffect(() => {
+    if (session) {
+      router.push('/');
+      alert("welcome")
+    }
+  }, [session, router]);
+
   const login_submit = async() =>{
     try{
       const response = await axios.post('http://127.0.0.1:8787/api/v1/users/signup', user);
@@ -92,7 +103,9 @@ export function Signin() {
             </span>
             <BottomGradient />
           </button>
-          <button
+          <button onClick={()=>{
+            signIn('google')
+          }}
             className=" relative group/btn flex space-x-2 items-center justify-start px-4 w-full text-black rounded-md h-10 font-medium bg-zinc-900 dark:shadow-[0px_0px_1px_1px_var(--neutral-800)]"
             type="submit"
           >
@@ -105,7 +118,7 @@ export function Signin() {
           
           <div className="flex gap-2 justify-center">
             <p>Already have an account</p>
-            <Link className="text-center font-semibold" href="/signup">: Sigup </Link>
+            <Link className="text-center font-semibold" href="/signup">: Signup </Link>
           </div>          
         </div>
       </div>
