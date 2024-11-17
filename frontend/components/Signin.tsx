@@ -26,7 +26,8 @@ export function Signin() {
   });
 
   useEffect(() => {
-    if (session) {
+    const token = session?.token || localStorage.getItem("token");
+    if (token) {
       router.push('/');
     }
   }, [session, router]);
@@ -40,7 +41,8 @@ export function Signin() {
       localStorage.setItem("token", jwt);
 
       if(response){
-        router.push('/explore')
+        router.push('/')
+
       }
       
     }catch(err:any){

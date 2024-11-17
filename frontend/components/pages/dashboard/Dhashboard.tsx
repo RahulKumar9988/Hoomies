@@ -14,7 +14,7 @@ function Dhashboard() {
   
   return(
     <div>
-      {session ? (
+      {session?.token ? (
          <Navbar />
 
       ):(

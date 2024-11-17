@@ -24,7 +24,8 @@ export function Signup() {
   });
 
   useEffect(() => {
-    if (session) {
+    const token = session?.token || localStorage.getItem("token");
+    if (token) {      
       router.push('/'); 
     }
   }, [session, router]);
@@ -37,7 +38,7 @@ export function Signup() {
       localStorage.setItem("token", jwt);
       
       if (response) {
-        router.push('/explore');
+        router.push('/');
       }
       
     } catch (err:any) {
