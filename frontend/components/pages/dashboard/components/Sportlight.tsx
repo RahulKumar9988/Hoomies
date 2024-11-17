@@ -22,7 +22,7 @@ export function Sportlight() {
             "In the halls where knowledge blooms, we chase our dreams in crowded rooms."
           </p>
           <div className="flex gap-4">
-            <Link href="/explore"><Button name="Explore"/> </Link>
+            <Link href="/explore"><Button name="Explore"/></Link>
             <Link href="/signin"><Button_Silver name="New User"/> </Link>
           </div>
         </div>

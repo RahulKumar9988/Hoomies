@@ -16,7 +16,7 @@ import { signIn, useSession } from "next-auth/react";
 export function Signup() {
   const { data: session } = useSession();
   const router = useRouter();
-
+  
   const [user, setUser] = useState({ 
     email: '', 
     username: '', 
@@ -25,7 +25,7 @@ export function Signup() {
 
   useEffect(() => {
     if (session) {
-      router.push('/');
+      router.push('/'); 
     }
   }, [session, router]);
 
