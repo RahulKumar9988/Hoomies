@@ -3,7 +3,6 @@ import React from "react";
 import { FloatingNav } from "@/components/ui/floating-navbar";
 import { IconHome, IconMessage, IconUser } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
-
 export function Navbar() {
   const { data: session } = useSession();
 

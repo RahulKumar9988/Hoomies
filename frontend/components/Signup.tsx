@@ -16,7 +16,6 @@ import { signIn, useSession } from "next-auth/react";
 export function Signup() {
   const { data: session } = useSession();
   const router = useRouter();
-  
   const [user, setUser] = useState({ 
     email: '', 
     username: '', 
@@ -24,9 +23,8 @@ export function Signup() {
   });
 
   useEffect(() => {
-    const token = session?.token || localStorage.getItem("token");
-    if (token) {      
-      router.push('/'); 
+    if (session) {
+      router.push('/');
     }
   }, [session, router]);
 
@@ -38,7 +36,7 @@ export function Signup() {
       localStorage.setItem("token", jwt);
       
       if (response) {
-        router.push('/');
+        router.push('/explore');
       }
       
     } catch (err:any) {
