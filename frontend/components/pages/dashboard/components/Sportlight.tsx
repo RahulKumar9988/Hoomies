@@ -23,7 +23,7 @@ export function Sportlight() {
           </p>
           <div className="flex gap-4">
             <Link href="/explore"><Button name="Explore"/></Link>
-            <Link href="/signin"><Button_Silver name="New User"/> </Link>
+            <Link href="/signup"><Button_Silver name="New User"/> </Link>
           </div>
         </div>
         <Review/>
