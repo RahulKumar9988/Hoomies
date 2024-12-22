@@ -27,7 +27,7 @@ model Post {
   content   String
   authorId  String
   image     String
-  phone     String
+  phone     Int
   price     Float
   published Boolean @default(false)
   author    User @relation(fields: [authorId], references: [id], name: "UserPosts")

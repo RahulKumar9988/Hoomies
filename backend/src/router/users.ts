@@ -41,18 +41,20 @@ userRouter.post('/signup', async (c) => {
       },
     });
 
-    const jwt = sign(
+    const  jwt = await sign(
       {
         id: newUser.id,
       },
       c.env.JWT_SECRET
     );
-
+    console.log(jwt);
     return c.json({
       message: 'user created',
       jwt: jwt,
       data: validatedData,
     });
+    
+    
   } catch (err:any) {
     if (err instanceof z.ZodError) {
       return c.json({ errors: err.errors }, 400);
