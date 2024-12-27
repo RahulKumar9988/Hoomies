@@ -22,7 +22,7 @@ export const PinContainer = ({
   );
 
   const onMouseEnter = () => {
-    setTransform("translate(-50%,-50%) rotateX(20deg) scale(0.9)");
+    setTransform("translate(-50%,-50%) rotateX(30deg) scale(0.9)");
   };
   const onMouseLeave = () => {
     setTransform("translate(-50%,-50%) rotateX(0deg) scale(1)");
