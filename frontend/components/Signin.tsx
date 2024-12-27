@@ -4,10 +4,6 @@ import React, { useState, useEffect } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import {
-  IconBrandGithub,
-  IconBrandGoogle,
-} from "@tabler/icons-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import axios from "axios";
@@ -26,7 +22,7 @@ export function Signin() {
       const response = await axios.post('http://127.0.0.1:8787/api/v1/users/signin', user);
       console.log(response);
       const jwt = response.data.jwt;
-      localStorage.setItem("token", jwt);
+      await localStorage.setItem("token", jwt);
       
       if (response) {
         router.push('/');
