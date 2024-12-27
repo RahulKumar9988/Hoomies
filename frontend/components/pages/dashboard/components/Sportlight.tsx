@@ -1,12 +1,27 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Spotlight } from "@/components/ui/spotlight";
 import Button from "@/components/Button";
 import Button_Silver from "@/components/Button_Silver"; 
 import Link from "next/link";
 import { Review } from "../herosection/Review";
+import { useRouter } from "next/navigation";
 
 export function Sportlight() {
+
+  const router = useRouter();
+    const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  
+    // Check for token immediately on component mount
+    useEffect(() => {
+      const token = localStorage.getItem("token"); // Check localStorage for token
+      if (token) {
+        setIsAuthenticated(true); // If token exists, set authenticated state to true
+      } else {
+        setIsAuthenticated(false); // If no token, set to false
+      }
+    }, [router]);
+
   return (
     <div className="md:h-[30rem] w-full rounded-md flex md:items-center md:justify-center bg-black/[0.96] antialiased bg-grid-white/[0.02] relative overflow-hidden">
       <Spotlight
@@ -21,10 +36,18 @@ export function Sportlight() {
           <p className="mt-4 font-normal text-neutral-300 max-w-lg text-xl text-center mx-auto">
             "In the halls where knowledge blooms, we chase our dreams in crowded rooms."
           </p>
+          {isAuthenticated ? (
           <div className="flex gap-4">
+            <Link href="/explore"><Button name="Explore"/></Link>
+            <Link href="/posts"><Button_Silver name="Join Us"/></Link>
+          </div>
+          ) : (
+            <div className="flex gap-4">
             <Link href="/explore"><Button name="Explore"/></Link>
             <Link href="/signup"><Button_Silver name="New User"/> </Link>
           </div>
+          )}
+
         </div>
         <Review/>
         

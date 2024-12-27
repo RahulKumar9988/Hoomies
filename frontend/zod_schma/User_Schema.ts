@@ -11,4 +11,4 @@ const Signin_schema = z.object({
     password : z.string().min(7,{message:"pass length must grater then 7"}),
 })
 
-export default Signup_schmea ; Signin_schema;
+export { Signup_schmea, Signin_schema };

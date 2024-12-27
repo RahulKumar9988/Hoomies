@@ -22,6 +22,7 @@
     "next-auth": "^4.24.11",
     "nodemailer": "^6.9.16",
     "path": "^0.12.7",
+    "typescript": "^5.7.2",
     "zod": "^3.23.8"
   },
   "devDependencies": {

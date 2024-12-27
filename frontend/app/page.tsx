@@ -1,6 +1,4 @@
-
-
-import Dhashboard from "@/components/pages/dashboard/Dhashboard"
+    import Dhashboard from "@/components/pages/dashboard/Dhashboard"
 
 function page() {
   return (
