@@ -22,12 +22,14 @@ export function Signin() {
       const response = await axios.post('http://127.0.0.1:8787/api/v1/users/signin', user);
       console.log(response);
       const jwt = response.data.jwt;
-      await localStorage.setItem("token", jwt);
+      if (typeof window !== 'undefined') {
+        const jwt = response.data.jwt;
+        localStorage.setItem("token", jwt);
+      }
       
       if (response) {
         router.push('/');
       }
-      
       
     } catch (err:any) {
       alert(`${err.message}`);
