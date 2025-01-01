@@ -5,7 +5,6 @@ import About from './about/About'
 import Contact_Us from './contact/Contact_Us'
 import { Cards } from './herosection/Cards'
 import Footer from './footer/Footer'
-import { Navbar } from '@/components/Navbar'
 
 function Dhashboard() {
 
@@ -13,8 +12,6 @@ function Dhashboard() {
   
   return(
     <div>
-    
-      <Navbar/>
       <Sportlight/>
       <Cards/>
       <About/>
