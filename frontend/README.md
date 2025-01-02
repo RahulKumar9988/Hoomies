@@ -1,1 +1,8 @@
-rfce
+```
+npm install
+npm run dev
+```
+
+```
+npm run deploy
+```
