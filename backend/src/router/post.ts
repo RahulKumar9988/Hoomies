@@ -3,10 +3,17 @@ import { withAccelerate } from "@prisma/extension-accelerate";
 import { verify } from "hono/jwt";
 import { PrismaClient } from "@prisma/client/edge";
 import post_Schema from "../Zodschema/post_schema";
-import cloudinary from 'cloudinary'
+import { v2 as cloudinary } from "cloudinary";
+import { encodeBase64 } from "hono/utils/encode";
+
+const cloudinaryUrl = 'https://api.cloudinary.com/v1_1/dw4ua6wpq/image/upload';
+const cloudinaryPreset = 'ml_default';
 
 export const postRoute = new Hono<{
     Bindings:{
+        CLOUDINARY_CLOUD_NAME: string;
+        CLOUDINARY_API_KEY: string;
+        CLOUDINARY_API_SECRET: string
         DATABASE_URL: string;
         JWT_SECRET: string;
     },
@@ -16,13 +23,14 @@ export const postRoute = new Hono<{
     
 }>()
 
-//---------------------------------cloudinary_config-----------------------------------------//
-cloudinary.v2.config({
-    cloud_name: 'CLOUDINARY_CLOUD_NAME',
-    api_key: 'CLOUDINARY_API_KEY',
-    api_secret: 'CLOUDINARY_API_SECRET'
+postRoute.use(async(c,next)=>{
+    cloudinary.config({
+        cloud_name: c.env.CLOUDINARY_CLOUD_NAME,
+        api_key: c.env.CLOUDINARY_API_KEY,
+        api_secret: c.env.CLOUDINARY_API_SECRET,
+    });
+    await next();
 })
-
 
 //--------------------------------user_Validation-----------------------------------------//
 postRoute.use('/*',async(c,next)=>{
@@ -58,54 +66,145 @@ postRoute.use('/*',async(c,next)=>{
 })
 
 //---------------------------------uploading_post-----------------------------------------//
-postRoute.post('/uplaod',async(c)=>{
+// postRoute.post('/upload',async(c)=>{
 
-    const body = await c.req.json();
-    console.log(body);
+//     const body = await c.req.json();
+//     console.log(body);
     
-    const { success , error } = post_Schema.safeParse(body);
-    if(!success){
-        return c.json({ 
+//     const { success , error } = post_Schema.safeParse(body);
+//     if(!success){
+//         return c.json({ 
+//             status: "error",
+//             message: "Invalid request body",
+//             errors: error.errors
+//         });
+//     }
+
+    
+//     const authorId = c.get("userId");
+//     const prisma = new PrismaClient({
+//         datasourceUrl:c.env.DATABASE_URL,
+//     }).$extends(withAccelerate())
+    
+//     try{
+//         const posts = await prisma.post.create({
+//             data:{
+//                 title:body.title,
+//                 content:body.content,
+//                 price:body.price,
+//                 phone:body.phone,
+//                 imageURl:body.image,
+//                 authorId:authorId
+                
+//             }
+//         })
+//         console.log(posts.authorId);
+
+//         return c.json({
+//             id:posts.authorId
+//         })
+
+//     }catch(err:any){
+//         return c.json({
+//             status:"error",
+//             message:"failed to create post",err,
+//         })
+//     }
+// })
+
+
+postRoute.post('/upload', async (c) => {
+    const formData = await c.req.formData();
+    console.log(formData);
+
+    const formDataObj: { [key: string]: any } = {};
+    formData.forEach((value, key) => {
+        formDataObj[key] = value;
+    });
+
+    const { success, error } = post_Schema.safeParse(formDataObj);
+
+    if (!success) {
+        return c.json({
             status: "error",
             message: "Invalid request body",
-            errors: error.errors
+            errors: error.errors,
         });
     }
-    
-
     const authorId = c.get("userId");
     const prisma = new PrismaClient({
         datasourceUrl:c.env.DATABASE_URL,
     }).$extends(withAccelerate())
-    
-    try{
-        const posts = await prisma.post.create({
-            data:{
-                title:body.title,
-                content:body.content,
-                price:body.price,
-                phone:body.phone,
-                imageURl:body.image,
-                authorId:authorId
-                
-            }
-        })
-        console.log(posts.authorId);
 
+    if (!authorId) {
         return c.json({
-            id:posts.authorId
-        })
-        
-
-    }catch(err:any){
-        return c.json({
-            status:"error",
-            message:"failed to create post",err,
-        })
-        
+            status: 'error',
+            message: 'User ID not found in context. Are you logged in?',
+        }, 401);
     }
-    
-})
+
+    try {
+        // Image upload logic
+        const image = formData.get('image') as File;
+        if (!image) {
+            return c.json({
+                status: 'error',
+                message: 'Image file is required',
+            }, 400);
+        }
+
+        // Prepare data for Cloudinary upload using FormData
+        const uploadData = new FormData();
+        uploadData.append('file', image);
+        uploadData.append('upload_preset', cloudinaryPreset);
+
+        // Upload image to Cloudinary using fetch
+        const cloudinaryResponse = await fetch(cloudinaryUrl, {
+            method: 'POST',
+            body: uploadData,
+        });
+
+        // Log full response for troubleshooting
+        interface CloudinaryResponse {
+            secure_url: string;
+            message?: string;
+        }
+        const cloudinaryResponseBody = await cloudinaryResponse.json() as CloudinaryResponse;
+        console.log('Cloudinary Response:', cloudinaryResponseBody);
+
+        if (!cloudinaryResponse.ok) {
+            throw new Error(`Failed to upload image to Cloudinary: ${cloudinaryResponseBody?.message || 'Unknown error'}`);
+        }
+
+        const imageUrl = cloudinaryResponseBody.secure_url;
+
+        // Create post in the database
+        const post = await prisma.post.create({
+            data: {
+                title: formData.get('title')?.toString() || '',
+                content: formData.get('content')?.toString() || '',
+                price: formData.get('price') ? String(formData.get('price')) : '0',
+                phone: formData.get('phone')?.toString() || '',
+                imageURl: imageUrl, // Use the URL from Cloudinary
+                authorId: authorId, // Use the logged-in user ID
+            }
+        });
+
+        return c.json({
+            status: 'success',
+            message: 'Post created successfully',
+            postId: post.id,
+            imageURL: imageUrl, // Return the image URL from Cloudinary
+        });
+    } catch (err) {
+        console.error('Error in /upload route:', err);
+        return c.json({
+            status: "error",
+            message: "Failed to create post",
+            error: (err as any).message || "Unknown error"
+        }, 500);
+    }
+});
 
 //---------------------------------delete_posts-------------------------------------------//
 postRoute.delete('/:id', async (c) => {

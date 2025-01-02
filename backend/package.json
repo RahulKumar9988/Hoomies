@@ -14,21 +14,25 @@
     "bull": "^4.16.5",
     "cloudinary": "^2.5.1",
     "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
     "express-rate-limit": "^7.5.0",
     "hono": "^4.6.9",
     "http": "^0.0.1-security",
     "ioredis": "^5.4.2",
     "jsonwebtoken": "^9.0.2",
     "multer": "^1.4.5-lts.1",
+    "nanoid": "^5.0.9",
     "next-auth": "^4.24.11",
     "nodemailer": "^6.9.16",
     "path": "^0.12.7",
-    "typescript": "^5.7.2",
     "zod": "^3.23.8"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20241022.0",
+    "@types/multer": "^1.4.12",
+    "@types/node": "^22.10.3",
     "prisma": "^6.1.0",
+    "typescript": "^5.7.2",
     "wrangler": "^3.90.0"
   }
 }

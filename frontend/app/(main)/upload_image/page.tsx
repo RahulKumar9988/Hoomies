@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useState } from 'react';
 import axios from 'axios';
 
@@ -6,7 +6,7 @@ const ImageUpload = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files?.[0]) {
@@ -16,21 +16,34 @@ const ImageUpload = () => {
 
   const handleUpload = async () => {
     if (!selectedFile) return;
+
     const formData = new FormData();
     formData.append('image', selectedFile);
     formData.append('title', title);
     formData.append('content', content);
-    formData.append('email', email);
+    formData.append('phone', phone);
+
+    const token = localStorage.getItem('token'); // Assuming the token is stored in local storage
 
     try {
-      const response = await axios.post('https://<YOUR_WORKER_URL>/upload', formData, {
+      const response = await axios.post('http://127.0.0.1:8787/api/v1/post/', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${token}`, // Include the token in the Authorization header
         },
       });
-      console.log('Image uploaded successfully:', response.data);
+      if (response.status === 200) {
+        console.log('Image uploaded successfully:', response.data);
+      } else {
+        console.error('Error uploading image:', response.data);
+      }
     } catch (error) {
-      console.error('Error uploading image:', error);
+      const err = error as any;
+      if (err.response) {
+        console.error('Error uploading image:', err.response.data);
+      } else {
+        console.error('Error uploading image:', err.message);
+      }
     }
   };
 
@@ -72,8 +85,19 @@ const ImageUpload = () => {
           <input
             type="email"
             placeholder="Enter email address"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            className="w-full px-3 py-2 border text-black border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+          />
+        </div>
+
+        <div className="w-full">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Image
+          </label>
+          <input
+            type="file"
+            onChange={handleFileChange}
             className="w-full px-3 py-2 border text-black border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
           />
         </div>
