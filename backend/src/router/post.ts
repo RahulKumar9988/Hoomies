@@ -3,6 +3,7 @@ import { withAccelerate } from "@prisma/extension-accelerate";
 import { verify } from "hono/jwt";
 import { PrismaClient } from "@prisma/client/edge";
 import post_Schema from "../Zodschema/post_schema";
+import cloudinary from 'cloudinary'
 
 export const postRoute = new Hono<{
     Bindings:{
@@ -15,8 +16,12 @@ export const postRoute = new Hono<{
     
 }>()
 
-
-
+//---------------------------------cloudinary_config-----------------------------------------//
+cloudinary.v2.config({
+    cloud_name: 'CLOUDINARY_CLOUD_NAME',
+    api_key: 'CLOUDINARY_API_KEY',
+    api_secret: 'CLOUDINARY_API_SECRET'
+})
 
 
 //--------------------------------user_Validation-----------------------------------------//
@@ -53,7 +58,7 @@ postRoute.use('/*',async(c,next)=>{
 })
 
 //---------------------------------uploading_post-----------------------------------------//
-postRoute.post('/',async(c)=>{
+postRoute.post('/uplaod',async(c)=>{
 
     const body = await c.req.json();
     console.log(body);
@@ -80,7 +85,7 @@ postRoute.post('/',async(c)=>{
                 content:body.content,
                 price:body.price,
                 phone:body.phone,
-                image:body.image,
+                imageURl:body.image,
                 authorId:authorId
                 
             }
@@ -179,7 +184,7 @@ postRoute.put('/', async (c) => {
                 content:body.content,
                 price:body.price,
                 phone:body.phone,
-                image:body.image,
+                imageURl:body.image,
                 
             }
         })
@@ -210,7 +215,7 @@ postRoute.get('/', async (c)=>{
                 title:true,
                 price:true,
                 phone:true,
-                image:true,
+                imageURl:true,
             }
         })
     
@@ -242,7 +247,7 @@ postRoute.get('/:id', async (c)=>{
                 title:true,
                 price:true,
                 phone:true,
-                image:true,
+                imageURl:true,
             }
         })
 
