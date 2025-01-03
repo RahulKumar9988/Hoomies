@@ -1,41 +1,62 @@
-import React from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
+import Image from 'next/image'
+import { FaPhone, FaDollarSign } from 'react-icons/fa'
 
 interface ExploreProps {
-  description: string;
-  imageSrc: string;
-  link: string;
+  content: string
+  imageURl: string
+  price: string
+  title: string
+  phone: string
 }
 
-function Explore({ description, imageSrc, link }: ExploreProps) {
+const Explore: React.FC<ExploreProps> = ({ content, imageURl, price, title, phone }) => {
   return (
-    <div className="w-full">
-      <div className="transition-all duration-300 hover:scale-105 border  
-                    bg-zinc-900 p-4 rounded-xl flex flex-col h-full ">
-        <div className="relative w-full aspect-square mb-4">
+    <div className="group relative flex flex-col bg-neutral-300 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden w-full max-w-sm mx-auto">
+      <div className="relative w-full h-64 sm:h-48 md:h-64">
+        {imageURl ? (
           <Image
-            src={imageSrc}
-            alt={description}
+            src={imageURl}
+            alt={title}
             fill
-            className="object-cover rounded-lg"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            className="object-cover rounded-t-lg"
+            sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
           />
-        </div>
-        <p className="text-gray-200 mb-4 line-clamp-2 flex-grow">
-          {description}
+        ) : (
+          <div className="w-full h-full flex items-center justify-center bg-gray-200">
+            No image available
+          </div>
+        )}
+      </div>
+      
+      <div className="p-3 sm:p-4 md:p-6 flex flex-col gap-1.5 sm:gap-2">
+        <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-800 line-clamp-1">
+          {title}
+        </h3>
+        
+        <p className="text-gray-600 text-xs sm:text-sm md:text-base line-clamp-2">
+          {content}
         </p>
-        <Link 
-          href={link}
-          className="inline-block text-center px-4 py-2 border border-zinc-700 
-                   rounded-lg hover:bg-zinc-800 transition-colors duration-200
-                   text-zinc-200 hover:text-white"
-        >
-          Learn More
-        </Link>
+        
+        <div className="mt-2 sm:mt-4 flex justify-between items-center">
+          <div className="flex items-center gap-1.5 sm:gap-2 text-emerald-600">
+            <FaDollarSign className="w-3 h-3 sm:w-4 sm:h-4" />
+            <span className="font-semibold text-sm sm:text-base">{price}</span>
+          </div>
+          
+          <div className="flex items-center gap-1.5 sm:gap-2 text-gray-600">
+            <FaPhone className="w-3 h-3 sm:w-4 sm:h-4" />
+            <a 
+              href={`tel:${phone}`} 
+              className="text-sm sm:text-base hover:text-emerald-600 transition-colors"
+            >
+              {phone}
+            </a>
+          </div>
+          <button className='border-2 bg-black w-14 h-8 rounded-2xl' >{"More"}</button>
+        </div>
       </div>
     </div>
-  );
+  )
 }
 
-export default Explore;
+export default Explore

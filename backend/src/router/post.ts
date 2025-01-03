@@ -1,10 +1,11 @@
-import { Hono } from "hono";
+import { Context, Env, Hono, Input } from "hono";
 import { withAccelerate } from "@prisma/extension-accelerate";
 import { verify } from "hono/jwt";
 import { PrismaClient } from "@prisma/client/edge";
 import post_Schema from "../Zodschema/post_schema";
 import { v2 as cloudinary } from "cloudinary";
-import { encodeBase64 } from "hono/utils/encode";
+// import { encodeBase64 } from "hono/utils/encode";
+import { rateLimiter } from "hono-rate-limiter";
 
 const cloudinaryUrl = 'https://api.cloudinary.com/v1_1/dw4ua6wpq/image/upload';
 const cloudinaryPreset = 'ml_default';
@@ -112,8 +113,8 @@ postRoute.use('/*',async(c,next)=>{
 //     }
 // })
 
-
-postRoute.post('/upload', async (c) => {
+postRoute.post('/upload',
+    async (c) => {
     const formData = await c.req.formData();
     console.log(formData);
 
@@ -259,53 +260,112 @@ postRoute.delete('/:id', async (c) => {
 });
 
 //----------------------------------update_post-------------------------------------------//
-postRoute.put('/', async (c) => {
-    const body = await c.req.json();
-    const { success , error } = post_Schema.safeParse(body);
-    
-    if(!success){
-        return c.json({
-            status: 'error',
-            message: 'schema is invalid',error
-        })
-    }
-    
-    const prisma = new PrismaClient({
-        datasourceUrl:c.env.DATABASE_URL,
-    }).$extends(withAccelerate())
+postRoute.put('/update', async (c) => {
+    const formData = await c.req.formData();
 
-    try{
-        const updated_post = await prisma.post.update({
-            where:{
-                id:body.id
-            },data:{
-                title:body.title,
-                content:body.content,
-                price:body.price,
-                phone:body.phone,
-                imageURl:body.image,
-                
-            }
-        })
+    const formDataObj: { [key: string]: any } = {};
+    formData.forEach((value, key) => {
+        formDataObj[key] = value;
+    });
+
+    const { success, error } = post_Schema.safeParse(formDataObj);
+
+    if (!success) {
         return c.json({
-            status: 'success',
-            message: 'Post updated successfully',
-            id: updated_post.id
-        })
-    }catch(err){
-        return c.json({
-            status: 'error',
-            message: 'Failed to update post',
-        })
+            status: "error",
+            message: "Invalid request body",
+            errors: error.errors,
+        }, 400);
     }
-})
+
+    const prisma = new PrismaClient({
+        datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate());
+
+    const postId = formData.get("id")?.toString();
+    if (!postId) {
+        return c.json({
+            status: "error",
+            message: "Post ID is required",
+        }, 400);
+    }
+
+    try {
+        // Fetch the current post to ensure it exists
+        const existingPost = await prisma.post.findUnique({
+            where: { id: postId },
+        });
+
+        if (!existingPost) {
+            return c.json({
+                status: "error",
+                message: "Post not found",
+            }, 404);
+        }
+
+        let imageUrl = existingPost.imageURl; // Retain current image URL if no new image is uploaded
+
+        // Check if a new image is provided
+        const image = formData.get('image') as File;
+        if (image) {
+            const uploadData = new FormData();
+            uploadData.append('file', image);
+            uploadData.append('upload_preset', cloudinaryPreset);
+
+            const cloudinaryResponse = await fetch(cloudinaryUrl, {
+                method: 'POST',
+                body: uploadData,
+            });
+
+            const cloudinaryResponseBody = await cloudinaryResponse.json() as {
+                secure_url: string;
+                message?: string;
+            };
+
+            if (!cloudinaryResponse.ok) {
+                throw new Error(
+                    `Failed to upload image to Cloudinary: ${cloudinaryResponseBody?.message || 'Unknown error'}`
+                );
+            }
+
+            imageUrl = cloudinaryResponseBody.secure_url; // Update with new image URL
+        }
+
+        // Update the post in the database
+        const updatedPost = await prisma.post.update({
+            where: { id: postId },
+            data: {
+                title: formData.get('title')?.toString() || existingPost.title,
+                content: formData.get('content')?.toString() || existingPost.content,
+                price: formData.get('price') ? String(formData.get('price')) : existingPost.price,
+                phone: formData.get('phone')?.toString() || existingPost.phone,
+                imageURl: imageUrl, // Use the updated or existing image URL
+            },
+        });
+
+        return c.json({
+            status: "success",
+            message: "Post updated successfully",
+            post: updatedPost,
+        });
+    } catch (err) {
+        console.error("Error in /update route:", err);
+        return c.json({
+            status: "error",
+            message: "Failed to update post",
+            error: (err as any).message || "Unknown error",
+        }, 500);
+    }
+});
+
   
-//----------------------------------bulk_route--------------------------------------------//
-postRoute.get('/', async (c)=>{
+//----------------------------------get posts--------------------------------------------//
+postRoute.get('/bulk', async (c)=>{
     
     const prisma = new PrismaClient({
         datasourceUrl:c.env.DATABASE_URL,
     }).$extends(withAccelerate())
+    
 
     try{
         const post = await prisma.post.findMany({
