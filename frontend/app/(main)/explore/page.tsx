@@ -55,20 +55,22 @@ const ExplorePage: React.FC = () => {
       </header>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-        {posts.length > 0 ? (
-          posts.map((post, index) => (
-            <Explore
-              key={index}
-              content={post.content}  // Pass the properties from the API response
-              imageURl={post.imageURl}  // Ensure correct property name for the image URL
-              price={post.price}  // Assuming the API provides the price
-              title={post.title}  // Assuming the API provides the title
-              phone={post.phone}  // Assuming the API provides the phone
-            />
-          ))
-        ) : (
-          <div>No posts available</div>  // Display a message when there are no posts
-        )}
+      {posts.length > 0 ? (
+        posts.map((post, index) => (
+          <Explore
+            key={index}
+            authorId={post.authorId}  // Ensure post.authorId is present
+            content={post.content}
+            imageURl={post.imageURl}
+            price={post.price}
+            title={post.title}
+            phone={post.phone}
+          />
+        ))
+      ) : (
+        <div>No posts available</div>
+      )}
+
       </div>
     </div>
   );
