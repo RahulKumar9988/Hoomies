@@ -2,7 +2,7 @@
 import Explore from '@/components/pages/explore/Explore'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
-import SyncLoader from 'react-spinners/SyncLoader'
+import PulseLoader from 'react-spinners/PulseLoader'
 
 const ExplorePage: React.FC = () => {
   const [posts, setPosts] = useState<any[]>([]);  // Ensure posts is always an array
@@ -58,7 +58,9 @@ const ExplorePage: React.FC = () => {
   if (loading) {
     return (
       <div className="h-screen flex items-center justify-center">
-        <SyncLoader color="#00ff6b" />
+        <div className="">
+          <PulseLoader color="#00ff07" />
+        </div>
       </div>
     );
   }

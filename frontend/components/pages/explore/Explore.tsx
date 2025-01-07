@@ -15,7 +15,7 @@ const Explore: React.FC<ExploreProps> = ({ content, imageURl, price, title, phon
   const router = useRouter()
 
   return (
-    <div className="group relative flex flex-col bg-neutral-300 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden w-full max-w-sm mx-auto">
+    <div className="group relative flex flex-col bg-neutral-300 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden h-96  w-80 max-w-sm mx-auto">
       <div className="relative w-full h-64 sm:h-48 md:h-64">
         {imageURl ? (
           <Image
