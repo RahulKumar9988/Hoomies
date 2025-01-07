@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import axios from "axios";
-import Button_Silver from "@/components/Button_Silver";
+import { Post_schema } from "@/zod_schma/User_Schema";
 
 const ImageUpload = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -11,6 +11,7 @@ const ImageUpload = () => {
   const [price, setPrice] = useState("");
   const [uploadStatus, setUploadStatus] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false); // State for loading status
+  const [validationErrors, setValidationErrors] = useState<string[]>([]); // State for validation errors
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files?.[0]) {
@@ -19,15 +20,26 @@ const ImageUpload = () => {
   };
 
   const handleUpload = async () => {
-    if (!selectedFile) {
-      setUploadStatus("Please select an image to upload.");
+    const Validate_post_result = Post_schema.safeParse({
+      title,
+      content,
+      phone,
+      price,
+      image: selectedFile,
+    });
+
+    if (!Validate_post_result.success) {
+      const error = Validate_post_result.error.errors.map((err: any) => err.message);
+      setValidationErrors(error);
       return;
     }
 
     setIsLoading(true); // Start loading
 
     const formData = new FormData();
-    formData.append("image", selectedFile);
+    if (selectedFile) {
+      formData.append("image", selectedFile);
+    }
     formData.append("title", title);
     formData.append("content", content);
     formData.append("phone", phone);
@@ -73,97 +85,90 @@ const ImageUpload = () => {
       <div className="space-y-4">
         {uploadStatus && (
           <p
-            className={`text-sm font-medium mb-4 ${
-              uploadStatus.includes("successfully")
-                ? "text-green-600"
-                : "text-red-600"
+            className={`text-sm font-medium ${
+              uploadStatus.includes("successfully") ? "text-green-600" : "text-red-600"
             }`}
           >
             {uploadStatus}
           </p>
         )}
 
+        {/* Display Validation Errors */}
+        {validationErrors.length > 0 && (
+          <div className="bg-red-100 p-4 rounded-lg mb-4">
+            <ul>
+              {validationErrors.map((error, index) => (
+                <li key={index} className="text-red-600">{error}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+
         <div className="w-full">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Title
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
           <input
             type="text"
             placeholder="Enter title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="w-full px-3 py-2 border text-black border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+            className={`w-full px-3 py-2 border text-black border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${validationErrors.some((err) => err.includes("title")) ? 'border-red-500' : ''}`}
           />
         </div>
 
         <div className="w-full">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Content
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Content</label>
           <textarea
             placeholder="Enter content"
             value={content}
             onChange={(e) => setContent(e.target.value)}
             rows={4}
-            className="w-full text-black px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors resize-none"
+            className={`w-full text-black px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors resize-none ${validationErrors.some((err) => err.includes("body")) ? 'border-red-500' : ''}`}
           />
         </div>
 
         <div className="w-full">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Phone no
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Phone no</label>
           <input
             type="tel"
             placeholder="Enter phone number"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
-            className="w-full px-3 py-2 border text-black border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+            className={`w-full px-3 py-2 border text-black border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${validationErrors.some((err) => err.includes("digits")) ? 'border-red-500' : ''}`}
           />
         </div>
 
         <div className="w-full">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Price
-          </label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Price</label>
           <input
-            type="price"
+            type="text"
             placeholder="Enter the price"
             value={price}
             onChange={(e) => setPrice(e.target.value)}
-            className="w-full px-3 py-2 border text-black border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+            className={`w-full px-3 py-2 border text-black border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${validationErrors.some((err) => err.includes("digits")) ? 'border-red-500' : ''}`}
           />
         </div>
 
-        <div className="w-full ">
-          <label className=" borderblock text-sm font-medium text-gray-700 mb-2">
-            Image
-          </label>
+        <div className="w-full">
+          <label className="block text-sm font-medium text-gray-700 mb-2">Image</label>
           <div className="flex flex-col gap-2 md:flex-row justify-between">
             <input
               type="file"
               onChange={handleFileChange}
-              className=" md:w-60  px-3 py-2 border text-black text-right border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-100 transition-colors"
+              className={`md:w-60 px-3 py-2 border text-black text-right border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-100 transition-colors ${validationErrors.some((err) => err.includes("image")) ? 'border-red-500' : ''}`}
             />
             <button
-            onClick={handleUpload}
-            className="w-full md:w-auto px-6 py-2 bg-black text-white font-medium rounded-3xl hover:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:ring-offset-2 transition-colors"
-          >
-            {isLoading ? (
-              <span>Loading...</span> // Show loading text or spinner here
-            ) : (
-              "Upload Details"
-            )}
-          </button>
+              onClick={handleUpload}
+              className="w-full md:w-auto px-6 py-2 bg-black text-white font-medium rounded-3xl hover:bg-neutral-800 focus:outline-none focus:ring-2 focus:ring-blue-100 focus:ring-offset-2 transition-colors"
+            >
+              {isLoading ? <span>Loading...</span> : "Upload Details"}
+            </button>
           </div>
         </div>
-
-        
 
         {/* Optionally, you can add a spinner for more visual feedback */}
         {isLoading && (
           <div className="flex justify-center mt-4">
-            <div className="loader"></div> {/* Add a CSS spinner here */}
+            <div className="loader"></div>
           </div>
         )}
       </div>
@@ -172,3 +177,4 @@ const ImageUpload = () => {
 };
 
 export default ImageUpload;
+

@@ -1,14 +1,13 @@
-import { Context, Env, Hono, Input } from "hono";
+import { Hono } from "hono";
 import { withAccelerate } from "@prisma/extension-accelerate";
 import { verify } from "hono/jwt";
 import { PrismaClient } from "@prisma/client/edge";
 import post_Schema from "../Zodschema/post_schema";
 import { v2 as cloudinary } from "cloudinary";
-// import { encodeBase64 } from "hono/utils/encode";
-import { rateLimiter } from "hono-rate-limiter";
 
 const cloudinaryUrl = 'https://api.cloudinary.com/v1_1/dw4ua6wpq/image/upload';
 const cloudinaryPreset = 'ml_default';
+ 
 
 export const postRoute = new Hono<{
     Bindings:{
@@ -34,7 +33,7 @@ postRoute.use(async(c,next)=>{
 })
 
 //--------------------------------user_Validation-----------------------------------------//
-postRoute.use('/*',async(c,next)=>{
+postRoute.use('/bulk*',async(c,next)=>{
     const auth_header = c.req.header("authorization");
     console.log("kooo");
     
@@ -357,18 +356,23 @@ postRoute.put('/update', async (c) => {
         }, 500);
     }
 });
-
-  
+ 
 //----------------------------------get posts--------------------------------------------//
 postRoute.get('/bulk', async (c)=>{
     
     const prisma = new PrismaClient({
         datasourceUrl:c.env.DATABASE_URL,
     }).$extends(withAccelerate())
+
+    const page = parseInt(c.req.query('page') ?? '1');  // Default to page 1 if no 'page' query param is passed
+    const limit = 10;  
+
     
 
     try{
         const post = await prisma.post.findMany({
+            skip: (page - 1) * limit,
+            take: limit,
             select:{
                 content:true,
                 title:true,

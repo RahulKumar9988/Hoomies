@@ -9,22 +9,10 @@ interface ExploreProps {
   price: string
   title: string
   phone: string
-  authorId: string // Author ID to pass as a query parameter
 }
 
-const Explore: React.FC<ExploreProps> = ({ content, imageURl, price, title, phone, authorId }) => {
+const Explore: React.FC<ExploreProps> = ({ content, imageURl, price, title, phone,  }) => {
   const router = useRouter()
-
-  // Handle navigation with query parameters
-  const handleMoreClick = () => {
-    if (authorId) {
-      router.push(`authorId=${authorId}`);
-    } else {
-      console.error('Error: Missing id or authorId');
-      alert('Missing id or authorId');
-    }
-  };
-  
 
   return (
     <div className="group relative flex flex-col bg-neutral-300 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden w-full max-w-sm mx-auto">
@@ -54,13 +42,13 @@ const Explore: React.FC<ExploreProps> = ({ content, imageURl, price, title, phon
         </p>
 
         <div className="mt-2 sm:mt-4 flex justify-between items-center">
-          <div className="flex items-center gap-1.5 sm:gap-2 text-emerald-600">
+            <div className="flex items-center gap-1.5 sm:gap-2 text-emerald-600">
             <FaDollarSign className="w-3 h-3 sm:w-4 sm:h-4" />
             <span className="font-semibold text-sm sm:text-base">{price}</span>
-          </div>
+            </div>
 
           <div className="flex items-center gap-1.5 sm:gap-2 text-gray-600">
-            <FaPhone className="w-3 h-3 sm:w-4 sm:h-4" />
+            <FaPhone className="w-3 h-3 sm:w-4 sm:h-4 transform rotate-90"/>
             <a
               href={`tel:${phone}`}
               className="text-sm sm:text-base hover:text-emerald-600 transition-colors"
@@ -70,7 +58,7 @@ const Explore: React.FC<ExploreProps> = ({ content, imageURl, price, title, phon
           </div>
 
           <button
-            onClick={handleMoreClick} // Handle click to navigate
+          onClick={()=>router.push('/full_post')}
             className="border-2 bg-black w-14 h-8 rounded-2xl text-white"
           >
             More
