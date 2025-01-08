@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import { BACKEND_URL } from "@/next.config";
 
 export function Signin() {
   const router = useRouter();
@@ -19,7 +20,7 @@ export function Signin() {
   const loginSubmit = async () => {
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8787/api/v1/users/signin",
+        `${BACKEND_URL}/users/signin`,
         user
       );
 

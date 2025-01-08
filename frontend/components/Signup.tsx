@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { BACKEND_URL } from "@/next.config";
 
 
 
@@ -25,7 +26,7 @@ export function Signup() {
 
   const login_submit = async() =>{
     try{
-      const response = await axios.post('http://127.0.0.1:8787/api/v1/users/signup', user);
+      const response = await axios.post(`${BACKEND_URL}/users/signup`, user);
       console.log(response);
       
       const jwt = response.data.jwt;

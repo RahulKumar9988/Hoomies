@@ -58,11 +58,20 @@ const Explore: React.FC<ExploreProps> = ({ content, imageURl, price, title, phon
           </div>
 
           <button
-          onClick={()=>router.push('/full_post')}
+            onClick={() =>
+              router.push(
+                `/full_post?title=${encodeURIComponent(title)}&content=${encodeURIComponent(
+                  content
+                )}&imageURl=${encodeURIComponent(imageURl)}&price=${encodeURIComponent(
+                  price
+                )}&phone=${encodeURIComponent(phone)}`
+              )
+            }
             className="border-2 bg-black w-14 h-8 rounded-2xl text-white"
           >
             More
           </button>
+
         </div>
       </div>
     </div>

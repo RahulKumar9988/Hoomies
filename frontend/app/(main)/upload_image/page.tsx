@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { Post_schema } from "@/zod_schma/User_Schema";
+import { BACKEND_URL } from "@/next.config";
 
 const ImageUpload = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -49,7 +50,7 @@ const ImageUpload = () => {
 
     try {
       const response = await axios.post(
-        "http://127.0.0.1:8787/api/v1/post/upload",
+        `${BACKEND_URL}/post/upload`,
         formData,
         {
           headers: {

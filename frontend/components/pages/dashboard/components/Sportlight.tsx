@@ -39,7 +39,7 @@ export function Sportlight() {
           {isAuthenticated ? (
           <div className="flex gap-4">
             <Link href="/explore"><Button name="Explore"/></Link>
-            <Link href="/posts"><Button_Silver name="Join Us"/></Link>
+            <Link href="/upload_image"><Button_Silver name="Upload your place"/></Link>
           </div>
           ) : (
             <div className="flex gap-4">

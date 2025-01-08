@@ -3,6 +3,7 @@ import Explore from '@/components/pages/explore/Explore'
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import PulseLoader from 'react-spinners/PulseLoader'
+import { BACKEND_URL } from '@/next.config'
 
 const ExplorePage: React.FC = () => {
   const [posts, setPosts] = useState<any[]>([]);  // Ensure posts is always an array
@@ -14,7 +15,7 @@ const ExplorePage: React.FC = () => {
     const fetchData = async () => {
       try {
         // Get the current page as a query parameter
-        const response = await axios.get('http://127.0.0.1:8787/api/v1/post/bulk', {
+        const response = await axios.get(`${BACKEND_URL}/post/bulk`, {
           params: {
             page: currentPage,  // Send the current page to the API
           },
