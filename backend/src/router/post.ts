@@ -33,11 +33,9 @@ postRoute.use(async(c,next)=>{
 })
 
 //--------------------------------user_Validation-----------------------------------------//
-postRoute.use('/bulk*',async(c,next)=>{
+postRoute.use('/*', async(c,next)=>{
+
     const auth_header = c.req.header("authorization");
-    console.log("kooo");
-    
-    console.log(auth_header);
 
     if (!auth_header) { 
         return c.json({ status: "error", 
@@ -123,7 +121,8 @@ postRoute.post('/upload',
     });
 
     const { success, error } = post_Schema.safeParse(formDataObj);
-
+    console.log(success);
+    
     if (!success) {
         return c.json({
             status: "error",
@@ -132,6 +131,8 @@ postRoute.post('/upload',
         });
     }
     const authorId = c.get("userId");
+    console.log(authorId);
+    
     const prisma = new PrismaClient({
         datasourceUrl:c.env.DATABASE_URL,
     }).$extends(withAccelerate())
@@ -139,7 +140,7 @@ postRoute.post('/upload',
     if (!authorId) {
         return c.json({
             status: 'error',
-            message: 'User ID not found in context. Are you logged in?',
+            message: 'User ID not found in context. Are you logged in?'
         }, 401);
     }
 
@@ -358,21 +359,15 @@ postRoute.put('/update', async (c) => {
 });
  
 //----------------------------------get posts--------------------------------------------//
-postRoute.get('/bulk', async (c)=>{
+postRoute.get('/bulk_', async (c)=>{
     
     const prisma = new PrismaClient({
         datasourceUrl:c.env.DATABASE_URL,
     }).$extends(withAccelerate())
-
-    const page = parseInt(c.req.query('page') ?? '1');  // Default to page 1 if no 'page' query param is passed
-    const limit = 10;  
-
     
 
     try{
         const post = await prisma.post.findMany({
-            skip: (page - 1) * limit,
-            take: limit,
             select:{
                 content:true,
                 title:true,
@@ -392,7 +387,7 @@ postRoute.get('/bulk', async (c)=>{
     }
 })
 
-postRoute.get('/:id', async (c)=>{
+postRoute.get('/    :id', async (c)=>{
     const id = c.req.param("id");
     const prisma = new PrismaClient({
         datasourceUrl:c.env.DATABASE_URL,

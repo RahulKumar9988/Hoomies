@@ -47,15 +47,16 @@ const ImageUpload = () => {
     formData.append("price", price);
 
     const token = localStorage.getItem("token"); // Assuming the token is stored in local storage
-
+    console.log(token);
+    
     try {
       const response = await axios.post(
-        `${BACKEND_URL}/post/upload`,
+        `${BACKEND_URL}post/update`,
         formData,
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `${token}`, // Include the token in the Authorization header
+            Authorization: `${token} `, // Include the token in the Authorization header
           },
         }
       );

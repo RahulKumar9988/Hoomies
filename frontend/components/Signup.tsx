@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useEffect, useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -10,19 +9,13 @@ import { useRouter } from "next/navigation";
 import { BACKEND_URL } from "@/next.config";
 
 
-
 export function Signup() {
   const router = useRouter()
-
-
-
   const [user, setuser] = useState({ 
     email: '', 
     username: '', 
     password: '', 
   });
-
-  
 
   const login_submit = async() =>{
     try{
@@ -31,6 +24,7 @@ export function Signup() {
       
       const jwt = response.data.jwt;
       localStorage.setItem("token", jwt);
+      
 
       if(response){
         router.push('/')
