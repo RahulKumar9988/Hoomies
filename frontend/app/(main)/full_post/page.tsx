@@ -2,8 +2,9 @@
 
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
+import { Suspense } from "react";
 
-const FullPost = () => {
+const FullPostContent = () => {
   const searchParams = useSearchParams();
   const title = searchParams.get("title");
   const content = searchParams.get("content");
@@ -12,7 +13,7 @@ const FullPost = () => {
   const phone = searchParams.get("phone");
 
   return (
-    <div className="mt-20 p-6 mx-auto max-w-2xl bg-neutral-100 rounded-lg shadow-lg ">
+    <div className="p-6 mx-auto max-w-2xl bg-neutral-100 rounded-lg shadow-lg">
       {imageURl && (
         <Image
           src={imageURl}
@@ -35,6 +36,14 @@ const FullPost = () => {
         </div>
       </div>
     </div>
+  );
+};
+
+const FullPost = () => {
+  return (
+    <Suspense fallback={<div>Loading post...</div>}>
+      <FullPostContent />
+    </Suspense>
   );
 };
 
