@@ -33,8 +33,7 @@ postRoute.use(async(c,next)=>{
 })
 
 //--------------------------------user_Validation-----------------------------------------//
-postRoute.use('/*', async(c,next)=>{
-
+postRoute.use('/new/*', async(c,next)=>{
     const auth_header = c.req.header("authorization");
 
     if (!auth_header) { 
@@ -110,7 +109,7 @@ postRoute.use('/*', async(c,next)=>{
 //     }
 // })
 
-postRoute.post('/upload',
+postRoute.post('/new/upload',
     async (c) => {
     const formData = await c.req.formData();
     console.log(formData);
@@ -208,7 +207,7 @@ postRoute.post('/upload',
 });
 
 //---------------------------------delete_posts-------------------------------------------//
-postRoute.delete('/:id', async (c) => {
+postRoute.delete('/new/:id', async (c) => {
     const postId = c.req.param('id'); 
     const userId = c.get('userId'); 
     
@@ -260,7 +259,7 @@ postRoute.delete('/:id', async (c) => {
 });
 
 //----------------------------------update_post-------------------------------------------//
-postRoute.put('/update', async (c) => {
+postRoute.put('/new/update', async (c) => {
     const formData = await c.req.formData();
 
     const formDataObj: { [key: string]: any } = {};
@@ -359,7 +358,7 @@ postRoute.put('/update', async (c) => {
 });
  
 //----------------------------------get posts--------------------------------------------//
-postRoute.get('/bulk_', async (c)=>{
+postRoute.get('/bulk', async (c)=>{
     
     const prisma = new PrismaClient({
         datasourceUrl:c.env.DATABASE_URL,
