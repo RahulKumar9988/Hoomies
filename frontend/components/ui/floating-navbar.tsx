@@ -23,12 +23,23 @@ export const FloatingNav = ({
   useEffect(() => {
     const token = localStorage.getItem("token");
     setIsAuthenticated(!!token); // Update authentication state based on token
+    
   }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("token"); // Remove token from localStorage
     setIsAuthenticated(false); // Update state to reflect logout
     router.push("/"); // Redirect to home page
+    setTimeout(() => {
+      window.location.reload()
+    }, 10);
+    
+  };
+  
+  const handleSignin = () => {
+    router.push("/signin"); // Redirect to signin page
+    
+    
   };
 
   return (
@@ -62,10 +73,7 @@ export const FloatingNav = ({
           </button>
         ) : (
           
-          <button onClick={()=> {
-            router.push("/")
-            window.location.reload()
-            }} className="border text-sm font-medium relative border-neutral-200 dark:border-white/[0.2] text-white dark:text-white px-4 py-2 rounded-full">
+          <button onClick={handleSignin} className="border text-sm font-medium relative border-neutral-200 dark:border-white/[0.2] text-white dark:text-white px-4 py-2 rounded-full">
             <span>Login</span>
             <span className="absolute inset-x-0 w-1/2 mx-auto -bottom-px bg-gradient-to-r from-transparent via-blue-500 to-transparent h-px" />
           </button>
