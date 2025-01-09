@@ -6,7 +6,6 @@ compatibility_flags = ["nodejs_compat"]
 
 
 
-
 # [[kv_namespaces]]
 # binding = "MY_KV_NAMESPACE"
 # id = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"

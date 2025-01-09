@@ -16,13 +16,14 @@ export function Signin() {
     password: "",
   });
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(""); // State to store error message
 
   const loginSubmit = async () => {
+    setLoading(true);
+    setError(""); // Clear previous error
     try {
-      const response = await axios.post(
-        `${BACKEND_URL}/users/signin`,
-        user
-      );
+      const response = await axios.post(`${BACKEND_URL}/users/signin`, user);
 
       if (response.status === 200) {
         const jwt = response.data.jwt;
@@ -34,7 +35,9 @@ export function Signin() {
         router.push("/"); // Redirect on success
       }
     } catch (err: any) {
-      alert(`Error: ${err.response?.data?.message || err.message}`);
+      setError(err.response?.data?.message || "An unexpected error occurred."); // Set error message
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -49,61 +52,64 @@ export function Signin() {
   }, [router]);
 
   return (
-    <div className="mt-24 sm:mt-8 md:mt-24 h-[50vh] md:h-[80vh] w-full max-w-[90%] sm:max-w-md mx-auto rounded-lg md:rounded-2xl border border-white p-4 md:p-8 bg-black ">
+    <div className="mt-24 sm:mt-8 md:mt-24 h-[50vh] md:h-[80vh] w-full max-w-[90%] sm:max-w-md mx-auto rounded-lg md:rounded-2xl border border-white p-4 md:p-8 bg-black">
       <h2 className="mt-9 font-bold text-lg sm:text-xl text-neutral-200">Welcome to Hoomies...</h2>
       <p className="text-xs sm:text-sm max-w-sm mt-2 text-neutral-300">Login to Hoomies...</p>
 
       <div className="my-4 sm:my-8">
-      <LabelInputContainer className="mb-3 sm:mb-4">
-        <Label htmlFor="email" className="text-sm sm:text-base">Email Address</Label>
-        <Input
-        id="email"
-        placeholder="rahul@gmail.com"
-        type="email"
-        className="text-sm sm:text-base p-2 sm:p-3"
-        onChange={(e) => setUser({ ...user, email: e.target.value })}
-        />
-      </LabelInputContainer>
-
-      <LabelInputContainer className="mb-3 sm:mb-4">
-        <Label htmlFor="password" className="text-sm sm:text-base">Password</Label>
-        <div className="relative">
+        <LabelInputContainer className="mb-3 sm:mb-4">
+          <Label htmlFor="email" className="text-sm sm:text-base">Email Address</Label>
           <Input
-        id="password"
-        placeholder="••••••••"
-        type={showPassword ? "text" : "password"}
-        className="text-sm sm:text-base p-2 sm:p-3"
-        onChange={(e) => setUser({ ...user, password: e.target.value })}
+            id="email"
+            placeholder="rahul@gmail.com"
+            type="email"
+            className="text-sm sm:text-base p-2 sm:p-3"
+            onChange={(e) => setUser({ ...user, email: e.target.value })}
           />
-          <button
-        type="button"
-        className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5"
-        onClick={() => setShowPassword(!showPassword)}
-          >
-        {showPassword ? "Hide" : "Show"}
-          </button>
+        </LabelInputContainer>
+
+        <LabelInputContainer className="mb-3 sm:mb-4">
+          <Label htmlFor="password" className="text-sm sm:text-base">Password</Label>
+          <div className="relative">
+            <Input
+              id="password"
+              placeholder="••••••••"
+              type={showPassword ? "text" : "password"}
+              className="text-sm sm:text-base p-2 sm:p-3"
+              onChange={(e) => setUser({ ...user, password: e.target.value })}
+            />
+            <button
+              type="button"
+              className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5"
+              onClick={() => setShowPassword(!showPassword)}
+            >
+              {showPassword ? "Hide" : "Show"}
+            </button>
+          </div>
+        </LabelInputContainer>
+
+        {error && <p className="text-red-500 text-sm mb-3">{error}</p>} {/* Error message display */}
+
+        <button
+          className={`bg-gradient-to-br relative group/btn from-zinc-900 block bg-zinc-800 w-full text-white rounded-md h-8 sm:h-10 text-sm sm:text-base font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] ${loading && "opacity-50 cursor-not-allowed"}`}
+          type="submit"
+          onClick={loginSubmit}
+          disabled={loading} // Disable button while loading
+        >
+          {loading ? "Signing In..." : "Sign In →"}
+          <BottomGradient />
+        </button>
+
+        <div className="bg-gradient-to-r from-transparent via-neutral-700 to-transparent my-4 sm:my-8 h-[1px] w-full" />
+
+        <div className="flex flex-col space-y-3 sm:space-y-4">
+          <div className="flex gap-2 justify-center text-xs sm:text-sm">
+            <p>Don't have an account?</p>
+            <Link className="text-center font-semibold" href="/signup">
+              Sign up
+            </Link>
+          </div>
         </div>
-      </LabelInputContainer>
-
-      <button
-        className="bg-gradient-to-br relative group/btn from-zinc-900 block bg-zinc-800 w-full text-white rounded-md h-8 sm:h-10 text-sm sm:text-base font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset]"
-        type="submit"
-        onClick={loginSubmit}
-      >
-        Sign In &rarr;
-        <BottomGradient />
-      </button>
-
-      <div className="bg-gradient-to-r from-transparent via-neutral-700 to-transparent my-4 sm:my-8 h-[1px] w-full" />
-
-      <div className="flex flex-col space-y-3 sm:space-y-4">
-        <div className="flex gap-2 justify-center text-xs sm:text-sm">
-        <p>Don't have an account?</p>
-        <Link className="text-center font-semibold" href="/signup">
-          Sign up
-        </Link>
-        </div>
-      </div>
       </div>
     </div>
   );
