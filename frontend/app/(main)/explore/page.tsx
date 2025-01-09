@@ -13,7 +13,7 @@ const ExplorePage: React.FC = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(`${BACKEND_URL}/post/bulk_`, {
+        const response = await axios.get(`${BACKEND_URL}/post/bulk`, {
           headers: { Authorization: localStorage.getItem("token") || "" },
         });
 

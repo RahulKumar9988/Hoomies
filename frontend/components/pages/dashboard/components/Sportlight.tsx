@@ -4,7 +4,6 @@ import { Spotlight } from "@/components/ui/spotlight";
 import Button from "@/components/Button";
 import Button_Silver from "@/components/Button_Silver"; 
 import Link from "next/link";
-import { Review } from "../herosection/Review";
 import { useRouter } from "next/navigation";
 
 export function Sportlight() {
@@ -49,7 +48,6 @@ export function Sportlight() {
           )}
 
         </div>
-        <Review/>
         
       </div>
     </div>

@@ -15,7 +15,6 @@ return (
                     </h2>
                     <ul className='space-y-3 text-lg md:text-xl text-gray-200'>
                         <li className='hover:text-gray-400 transition-colors'>Rahul Kumar</li>
-                        <li className='hover:text-gray-400 transition-colors'>Arohi Raj</li>
                         <li className='hover:text-gray-400 transition-colors'>
                             <a href="mailto:developerhomies@gmail.com" className='hover:underline'>
                                 developerhomies@gmail.com

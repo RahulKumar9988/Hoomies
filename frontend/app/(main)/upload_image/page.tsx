@@ -51,7 +51,7 @@ const ImageUpload = () => {
     
     try {
       const response = await axios.post(
-        `${BACKEND_URL}post/update`,
+        `${BACKEND_URL}/post/new/upload`,
         formData,
         {
           headers: {
