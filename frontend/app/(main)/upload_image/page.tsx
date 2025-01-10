@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { Post_schema } from "@/zod_schma/User_Schema";
 import { BACKEND_URL } from "@/next.config";
+import router from "next/router";
 
 const ImageUpload = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -67,6 +68,7 @@ const ImageUpload = () => {
         setUploadStatus("Failed to upload image.");
         console.error("Error uploading image:", response.data);
       }
+      router.push('/explore')
     } catch (error) {
       const err = error as any;
       if (err.response) {
