@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { withAccelerate } from "@prisma/extension-accelerate";
 import { verify } from "hono/jwt";
-import { PrismaClient } from "@prisma/client/edge";
+import { PrismaClient, Prisma } from "@prisma/client/edge";
 import post_Schema from "../Zodschema/post_schema";
 import { v2 as cloudinary } from "cloudinary";
 
@@ -358,35 +358,59 @@ postRoute.put('/new/update', async (c) => {
 });
  
 //----------------------------------get posts--------------------------------------------//
-postRoute.get('/bulk', async (c)=>{
-    
+postRoute.get('/bulk', async (c) => {
     const prisma = new PrismaClient({
-        datasourceUrl:c.env.DATABASE_URL,
-    }).$extends(withAccelerate())
-    
+        datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate());
 
-    try{
-        const post = await prisma.post.findMany({
-            select:{
-                content:true,
-                title:true,
-                price:true,
-                phone:true,
-                imageURl:true,
-            }
-        })
-    
-        return c.json({post})
+    const page = parseInt(c.req.query('page') || '1', 10); // Default to page 1
+    const limit = parseInt(c.req.query('limit') || '10', 10); // Default to limit 10
+    const sort = c.req.query('sort') || 'latest'; // Sorting parameter (default to "latest")
+    const skip = (page - 1) * limit;
 
-    }catch(err){
+    try {
+        const orderBy: { createdAt: 'asc' | 'desc' } = {
+            createdAt: sort === 'latest' ? 'desc' : 'asc',
+        };
+        const posts = await prisma.post.findMany({
+            skip,
+            take: limit,
+            orderBy,
+            select: {
+                content: true,
+                title: true,
+                price: true,
+                phone: true,
+                imageURl: true,
+                createdAt: true,
+            },
+        });
+
+        const totalPosts = await prisma.post.count();
+        const totalPages = Math.ceil(totalPosts / limit);
+
+        return c.json({
+            posts,
+            pagination: {
+                currentPage: page,
+                totalPages,
+                totalPosts,
+                hasNextPage: page < totalPages,
+                hasPreviousPage: page > 1,
+            },
+        });
+    } catch (err) {
         return c.json({
             status: 'error',
             message: 'Failed to fetch posts',
-        })
+        });
     }
-})
+});
 
-postRoute.get('/    :id', async (c)=>{
+
+
+
+postRoute.get('/:id', async (c)=>{
     const id = c.req.param("id");
     const prisma = new PrismaClient({
         datasourceUrl:c.env.DATABASE_URL,

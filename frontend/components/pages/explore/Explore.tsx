@@ -1,7 +1,7 @@
 "use client"
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
-import { FaPhone, FaDollarSign } from 'react-icons/fa'
+import { FaPhone, FaDollarSign, FaRupeeSign } from 'react-icons/fa'
 
 interface ExploreProps {
   content: string
@@ -43,7 +43,7 @@ const Explore: React.FC<ExploreProps> = ({ content, imageURl, price, title, phon
 
         <div className="mt-2 sm:mt-4 flex justify-between items-center">
             <div className="flex items-center gap-1.5 sm:gap-2 text-emerald-600">
-            <FaDollarSign className="w-3 h-3 sm:w-4 sm:h-4" />
+            <FaRupeeSign className="w-3 h-3 sm:w-4 sm:h-4" />
             <span className="font-semibold text-sm sm:text-base">{price}</span>
             </div>
 

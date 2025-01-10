@@ -13,7 +13,7 @@ const FullPostContent = () => {
   const phone = searchParams.get("phone");
 
   return (
-    <div className="p-6 mx-auto max-w-2xl bg-neutral-100 rounded-lg shadow-lg">
+    <div className="p-6 mt-20 mx-auto max-w-2xl bg-neutral-100 rounded-lg shadow-lg">
       {imageURl && (
         <Image
           src={imageURl}
