@@ -1,9 +1,10 @@
 "use client";
 import Explore from "@/components/pages/explore/Explore";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import PulseLoader from "react-spinners/PulseLoader";
 import { BACKEND_URL } from "@/next.config";
+import { debounce } from "lodash"; // We will use lodash for debouncing
 
 const ExplorePage: React.FC = () => {
   const [posts, setPosts] = useState<any[]>([]);
@@ -13,47 +14,52 @@ const ExplorePage: React.FC = () => {
   const [sortOrder, setSortOrder] = useState<"latest" | "oldest">("latest");
   const [priceRange, setPriceRange] = useState({ min: 1000, max: 10000 });
 
-  const fetchPosts = async (currentPage: number, order: "latest" | "oldest", range: { min: number; max: number }) => {
-    setLoading(true);
-    try {
-      const response = await axios.get(`${BACKEND_URL}/post/bulk`, {
-        params: { page: currentPage, limit: 10, sort: order, minPrice: range.min, maxPrice: range.max },
-        headers: { Authorization: localStorage.getItem("token") || "" },
-      });
+  // Optimized fetchPosts function
+  const fetchPosts = useCallback(
+    async (currentPage: number, order: "latest" | "oldest", range: { min: number; max: number }) => {
+      setLoading(true);
+      try {
+        const response = await axios.get(`${BACKEND_URL}/post/bulk`, {
+          params: { page: currentPage, limit: 10, sort: order, minPrice: range.min, maxPrice: range.max },
+          headers: { Authorization: localStorage.getItem("token") || "" },
+        });
 
-      const postsData = Array.isArray(response.data.posts) ? response.data.posts : [];
-      setPosts((prevPosts) => (currentPage === 1 ? postsData : [...prevPosts, ...postsData]));
-      setHasMore(postsData.length > 0);
-    } catch (error) {
-      console.error("Error fetching posts:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+        const postsData = Array.isArray(response.data.posts) ? response.data.posts : [];
+        setPosts((prevPosts) => (currentPage === 1 ? postsData : [...prevPosts, ...postsData]));
+        setHasMore(postsData.length > 0);
+      } catch (error) {
+        console.error("Error fetching posts:", error);
+      } finally {
+        setLoading(false);
+      }
+    },
+    []
+  );
 
-  useEffect(() => {
-    fetchPosts(page, sortOrder, priceRange);
-  }, [page, sortOrder, priceRange]);
-
-  const handleSortChange = (order: "latest" | "oldest") => {
+  // Use debounce for price and sort change
+  const handleSortChange = debounce((order: "latest" | "oldest") => {
     if (sortOrder !== order) {
       setSortOrder(order);
       setPage(1);
       setPosts([]);
     }
-  };
+  }, 500); // 500ms debounce time
 
-  const handlePriceChange = (value: number) => {
+  const handlePriceChange = debounce((value: number) => {
     setPriceRange({ min: 1000, max: value });
     setPage(1);
     setPosts([]);
-  };
+  }, 500); // 500ms debounce time
 
   const loadMorePosts = () => {
     if (!loading && hasMore) {
       setPage((prevPage) => prevPage + 1);
     }
   };
+
+  useEffect(() => {
+    fetchPosts(page, sortOrder, priceRange);
+  }, [page, sortOrder, priceRange, fetchPosts]);
 
   return (
     <div className="container mx-auto px-4 py-8 mt-10">
@@ -74,22 +80,6 @@ const ExplorePage: React.FC = () => {
           </button>
         </div>
       </header>
-
-      <div className="mb-6">
-        <h3 className="text-lg font-medium text-gray-300">Filter by Max Price</h3>
-        <div className="flex items-center space-x-4 mt-2">
-          <input
-            type="range"
-            min={1000}
-            max={10000}
-            value={priceRange.max}
-            step={500}
-            onChange={(e) => handlePriceChange(Number(e.target.value))}
-            className="w-72"
-          />
-          <span className="text-gray-300">{priceRange.max}</span>
-        </div>
-      </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
         {posts.length > 0 ? (
