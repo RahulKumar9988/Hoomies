@@ -9,8 +9,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "export": "next build && next export"
+    "lint": "next lint"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.7.4",
@@ -29,7 +28,7 @@
     "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
     "lucide-react": "^0.454.0",
-    "next": "15.0.2",
+    "next": "^15.1.4",
     "next-auth": "^4.24.11",
     "react": "^18.3.1",
     "react-content-loader": "^7.0.2",
