@@ -4,7 +4,7 @@ import axios from "axios";
 import React, { useEffect, useState, useCallback } from "react";
 import PulseLoader from "react-spinners/PulseLoader";
 import { BACKEND_URL } from "@/next.config";
-import { debounce } from "lodash"; // We will use lodash for debouncing
+import { debounce } from "lodash";
 
 const ExplorePage: React.FC = () => {
   const [posts, setPosts] = useState<any[]>([]);
@@ -118,4 +118,4 @@ const ExplorePage: React.FC = () => {
   );
 };
 
-export default ExplorePage;
+export default React.memo(ExplorePage);

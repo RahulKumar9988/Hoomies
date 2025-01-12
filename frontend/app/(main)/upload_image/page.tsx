@@ -48,7 +48,6 @@ const ImageUpload = () => {
     formData.append("price", price);
 
     const token = localStorage.getItem("token"); // Assuming the token is stored in local storage
-    console.log(token);
     
     try {
       const response = await axios.post(
@@ -63,20 +62,17 @@ const ImageUpload = () => {
       );
       if (response.status === 200) {
         setUploadStatus("Image uploaded successfully!");
-        console.log("Image uploaded successfully:", response.data);
+        router.push("/explore");
       } else {
         setUploadStatus("Failed to upload image.");
-        console.error("Error uploading image:", response.data);
       }
-      router.push('/explore')
+      
     } catch (error) {
       const err = error as any;
       if (err.response) {
         setUploadStatus(err.response.data.message || "Error uploading image.");
-        console.error("Error uploading image:", err.response.data);
       } else {
         setUploadStatus(err.message || "Error uploading image.");
-        console.error("Error uploading image:", err.message);
       }
     } finally {
       setIsLoading(false); // Stop loading

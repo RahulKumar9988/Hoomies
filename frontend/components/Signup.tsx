@@ -24,7 +24,6 @@ export function Signup() {
     setError(""); // Clear previous error
     try {
       const response = await axios.post(`${BACKEND_URL}/users/signup`, user);
-      console.log(response);
 
       const jwt = response.data.jwt;
       localStorage.setItem("token", jwt);
